@@ -371,12 +371,11 @@ void ADC(Mos6502 *cpu, Memory *mem)
     int8_t a = cpu->a, b = mem->ram[cpu->addr];
     sum = a + b + cin;
 
-    printf("%d %d", a, b);
     if (a > 0 && b > 0 && sum < 0) 
         cpu->psr |= flag_mask.overflow;
     else if (sum == 0) 
         cpu->psr |= flag_mask.zero;
-    else if (sum < 0)
+    else if ((sum & flag_mask.negative) == flag_mask.negative)
         cpu->psr |= flag_mask.negative;
     cout = sum >> 7;
     if (cout == 0) 

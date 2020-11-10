@@ -27,19 +27,19 @@ void reset_cpu(Mos6502 *cpu, Memory *mem)
 
 void set_flag(Mos6502 *cpu, uint8_t mask, uint8_t val1, uint8_t val2, uint8_t aux){
 
-  int change = 0;
+  int set = 0;
 
   if (mask == 0x01){        // Carry
     // arithmetic
-    if (val1 > val2) change = 1;
+    if (val1 > val2) set = 1;
     // compare
-    if (val1 >= val2) change = 1;
+    if (val1 >= val2) set = 1;
   }
   else if (mask == 0x02) {  // Zero
     // compare
-    if (val1 == val2) change = 1;
+    if (val1 == val2) set = 1;
     // otherwise
-    if (val1 == 0) change = 1;
+    if (val1 == 0) set = 1;
   }
   else if (mask == 0x04) {  // Interrupt Disable
   }
@@ -53,16 +53,19 @@ void set_flag(Mos6502 *cpu, uint8_t mask, uint8_t val1, uint8_t val2, uint8_t au
     uint8_t sig_val2 = val2 & 0x80;
     uint8_t sig_aux = aux & 0x80;
     if (sig_val1 == sig_val2)
-      if (sig_val1 != sig_aux) change = 1;
+      if (sig_val1 != sig_aux) set = 1;
   }
   else if (mask == 0x80) {  // Negative
     // compare
-    if (val1 < val2) change = 1;
+    if (val1 < val2) set = 1;
     // otherwise
-    if (val1 & mask) change = 1;
+    if (val1 & mask) set = 1;
   }
 
-  if (change) cpu->psr |= mask;
+  if (set) 
+    cpu->psr |= mask;
+  else
+    cpu->psr &= ~mask;
 }
 
 void execute_program(Mos6502 *cpu, Memory *mem)
