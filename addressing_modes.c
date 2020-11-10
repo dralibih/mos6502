@@ -14,6 +14,9 @@ addr_mode get_addressing_mode(uint8_t opcode)
     uint8_t cc = opcode & cc_mask;
     uint8_t bbb = opcode & bbb_mask;
 
+    printf("Addressing Mode: ");
+    printf("\033[1;35m");
+
     if (cc == 0x01)
     {
         switch (bbb)
